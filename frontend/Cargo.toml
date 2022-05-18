@@ -1,0 +1,10 @@
+[package]
+name = "frontend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# you can check the latest version here: https://crates.io/crates/yew
+yew = "0.19.3"

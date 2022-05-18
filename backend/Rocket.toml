@@ -1,0 +1,2 @@
+[development.databases]
+postgres = { url = "postgres://postgres:postgres@localhost:5432/iot_ruststack_demo" }
