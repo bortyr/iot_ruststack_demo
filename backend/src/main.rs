@@ -17,7 +17,7 @@ pub mod schema;
 struct DbConn(PgConnection);
 
 // Get measurements from the PostgreSQL
-#[get("/getm")]
+#[get("/getm.json")]
 fn get_measurements(conn: DbConn) -> Json<Vec<Measurement>> {
     let readings = measurements::table
         .order(measurements::columns::id.desc())
