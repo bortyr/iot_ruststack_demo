@@ -5,13 +5,11 @@ use crate::schema::measurements;
 #[derive(Queryable,Serialize)]
 pub struct Measurement {
     pub id: i32,
-    pub title: String,
-    pub body: String,
+    pub temperature: String,
 }
 
 #[derive(Insertable, Deserialize)]
 #[table_name = "measurements"]
 pub struct NewMeasurement<'a> {
-    pub title: &'a str,
-    pub body: &'a str,
+    pub temperature: &'a str,
 }
