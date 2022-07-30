@@ -9,22 +9,20 @@ use std::fmt::Result;
 #[derive(Clone, PartialEq, Deserialize)]
 struct Measurement {
     pub id: usize,
-    pub title: String,
-    pub body: String,
+    pub temperature: String,
 }
 
 impl Debug for Measurement {
 fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         write!(f, "{}", &self.id)?;
-        write!(f, "{}", &self.title)?;
-        write!(f, "{}", &self.body)?;
+        write!(f, "{}", &self.temperature)?;
         Ok(())
     }
 }
 
 impl Display for Measurement {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-      write!(f, "{} <{}> {}", self.id, self.title, self.body)
+      write!(f, "{} <{}>", self.id, self.temperature)
     }
 }
 
@@ -33,7 +31,7 @@ struct Measurements(pub Vec<Measurement>);
 impl Display for Measurements {
     fn fmt(&self, f: &mut Formatter) -> Result {
         for v in &self.0 {
-            writeln!(f, "{}:\t{}\t{}\t", v.id, v.title, v.body)?;
+            writeln!(f, "{}:\t{}\t", v.id, v.temperature)?;
         }
         Ok(())
     }
@@ -94,6 +92,7 @@ fn app() -> Html {
               </nav>
             <br/>
             <h2 class="title is-2 has-text-centered">{ "Measurements" }</h2>
+            <p class="has-text-centered">{ "Temperature" }</p>
             <p class="has-text-centered multiline">{ format!("{}", values) }</p>
             </div>
         </div>
