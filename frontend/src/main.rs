@@ -2,26 +2,39 @@ use yew::prelude::*;
 use serde::Deserialize;
 use reqwasm::http::Request;
 use std::fmt::Debug;
+use std::fmt::Display;
+use std::fmt::Formatter;
+use std::fmt::Result;
 
 #[derive(Clone, PartialEq, Deserialize)]
 struct Measurement {
-    id: usize,
-    title: String,
-    url: String,
-    speaker: String,
-    // Measurement
-    // body: String,
+    pub id: usize,
+    pub title: String,
+    pub body: String,
 }
 
 impl Debug for Measurement {
-fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "id: {}", &self.id)?;
-        writeln!(f, "title: {}", &self.title)?;
-        // Tutorial
-        writeln!(f, "speaker: {}", &self.speaker)?;
-        writeln!(f, "url: {}", &self.url)?;
-        // Measurement
-        // writeln!(f, "body: {}", &self.body)?;
+fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "{}", &self.id)?;
+        write!(f, "{}", &self.title)?;
+        write!(f, "{}", &self.body)?;
+        Ok(())
+    }
+}
+
+impl Display for Measurement {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+      write!(f, "{} <{}> {}", self.id, self.title, self.body)
+    }
+}
+
+struct Measurements(pub Vec<Measurement>);
+
+impl Display for Measurements {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        for v in &self.0 {
+            writeln!(f, "{}:\t{}\t{}\t", v.id, v.title, v.body)?;
+        }
         Ok(())
     }
 }
@@ -35,8 +48,7 @@ fn app() -> Html {
         use_effect_with_deps(move |_| {
             let measurements = measurements.clone();
             wasm_bindgen_futures::spawn_local(async move {
-            let fetched_measurements: Vec<Measurement> = Request::get("/tutorial/data.json")
-            // let fetched_measurements: Vec<Measurement> = Request::get("http://localhost:8000/getm.json")
+            let fetched_measurements: Vec<Measurement> = Request::get("http://localhost:8000/getm.json")
                .send()
                .await
                .unwrap_or_else(|error| {
@@ -53,13 +65,37 @@ fn app() -> Html {
         }, ())
     }
 
+    let values: Measurements = Measurements((&measurements).to_vec());
+
+
     html! {
         <>
-        <h1>{ "Hello World" }</h1>
-        <div>
-            <p>{ format!("Is empty: {}", measurements.is_empty()) }</p>
-            <p>{ format!("Length of vector: {}", measurements.len()) }</p>
-            <p>{ format!("Contents of vector: {:?}", measurements) }</p>
+        <body class="has-background-primary" style="width: 100%!important;">
+            <br/>
+            <h1 class="title is-1 has-text-centered">{ "IoT eHealth Acquisition System Software Stack Based On Rust" }</h1>
+            <br/>
+        </body>
+        <div class="columns">
+            <div class="column">
+            <br/>
+            <nav class="level">
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">{format!("Is database empty ?")}</p>
+                  <p class="title">{ format!("{}", measurements.is_empty()) }</p>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <p class="heading">{format!("Amount of measurements in database")}</p>
+                  <p class="title">{ format!("{}", measurements.len()) }</p>
+                </div>
+              </div>
+              </nav>
+            <br/>
+            <h2 class="title is-2 has-text-centered">{ "Measurements" }</h2>
+            <p class="has-text-centered multiline">{ format!("{}", values) }</p>
+            </div>
         </div>
         </>
     }
